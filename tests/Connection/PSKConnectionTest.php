@@ -36,6 +36,7 @@ class PSKConnectionTest extends TestCase
 		$command = $property->getValue($connection);
 
 		self::assertStringContainsString('openssl s_client', $command);
+		self::assertStringContainsString('-quiet', $command);
 		self::assertStringContainsString('-tls1_2', $command);
 	}
 }

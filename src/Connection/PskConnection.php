@@ -7,6 +7,9 @@ use RuntimeException;
 
 use function is_resource;
 use function sprintf;
+use function strlen;
+use function substr;
+use function trim;
 
 /**
  * Implements PSK (Pre-Shared Key) TLS connections to Zabbix Server.
@@ -41,7 +44,7 @@ final class PskConnection implements ConnectionInterface
 		$cipher = $options['tls-cipher'] ?? 'PSK-AES256-CBC-SHA';
 
 		$this->command = sprintf(
-			'openssl s_client -connect %s:%d -psk_identity %s -psk %s -tls1_2 -cipher %s',
+			'openssl s_client -quiet -connect %s:%d -psk_identity %s -psk %s -tls1_2 -cipher %s',
 			escapeshellarg($options['server']),
 			(int) $options['port'],
 			escapeshellarg($options['tls-psk-identity']),
@@ -82,7 +85,21 @@ final class PskConnection implements ConnectionInterface
 		}
 
 		$output = stream_get_contents($this->pipes[1]);
-		return $output ?: false;
+
+		$errorOutput = '';
+		if (isset($this->pipes[2])) {
+			$errorOutput = trim(stream_get_contents($this->pipes[2]) ?: '');
+		}
+
+		if ($output === false || $output === '') {
+			if ($errorOutput !== '') {
+				throw new RuntimeException('Failed to read PSK response: ' . $errorOutput);
+			}
+
+			return false;
+		}
+
+		return $output;
 	}
 
 	/**
@@ -94,9 +111,23 @@ final class PskConnection implements ConnectionInterface
 			return false;
 		}
 
-		// Write data to stdin
-		$bytesWritten = fwrite($this->pipes[0], $data);
-		return $bytesWritten ?: false;
+		$bytesWritten = 0;
+		$dataLength = strlen($data);
+
+		while ($bytesWritten < $dataLength) {
+			$written = fwrite($this->pipes[0], substr($data, $bytesWritten));
+			if ($written === false || $written === 0) {
+				return false;
+			}
+
+			$bytesWritten += $written;
+		}
+
+		fflush($this->pipes[0]);
+		fclose($this->pipes[0]);
+		unset($this->pipes[0]);
+
+		return $bytesWritten;
 	}
 
 	/**

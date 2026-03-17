@@ -134,7 +134,7 @@ class ZabbixSender implements ZabbixSenderInterface
 		$sent_size = $this->write($data);
 
 		if ($sent_size === false || $sent_size != $data_size) {
-			throw new RuntimeException('cannot receive response');
+			throw new RuntimeException('cannot send request data');
 		}
 
 		$response = $this->read();
