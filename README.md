@@ -166,6 +166,29 @@ $sender = new \Fliix\ZabbixSender\ZabbixSender([
 ]);
 ```
 
+### PSK with batch mode
+
+PSK works transparently with batch mode. The same `tls-connect` options are
+used — just call `batch()` before sending:
+
+```php
+$sender = new \Fliix\ZabbixSender\ZabbixSender([
+    'server'           => '127.0.0.1',
+    'port'             => 10051,
+    'host'             => 'my-zabbix-host',
+    'tls-connect'      => 'psk',
+    'tls-psk-identity' => 'my-php-sender',
+    'tls-psk'          => 'a3f1b2c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2',
+]);
+
+$sender->batch()
+    ->send('cpu.load',    '0.42')
+    ->send('memory.free', '1024')
+    ->send('disk.used',   '512', 'other-host'); // override host per item
+
+$success = $sender->execute();
+```
+
 ### Troubleshooting PSK
 
 | Symptom | Likely cause | Fix |
@@ -188,6 +211,7 @@ $sender = new \Fliix\ZabbixSender\ZabbixSender([
 | `tls-psk-identity` | string | – | PSK identity (required when `tls-connect=psk`) |
 | `tls-psk` | string | – | PSK hex key (required when `tls-connect=psk`) |
 | `tls-cipher` | string | `PSK-AES256-CBC-SHA` | Override TLS 1.2 cipher for PSK connections |
+| `tls-cipher13` | string | – | Override TLS 1.3 ciphersuite (OpenSSL ≥ 1.1.1 only) |
 
 ---
 
