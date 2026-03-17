@@ -2,8 +2,8 @@
 
 namespace Fliix\ZabbixSender\Connection;
 
-use RuntimeException;
 use Fliix\ZabbixSender\Resolver\OptionsResolver;
+use RuntimeException;
 
 use function is_resource;
 use function sprintf;

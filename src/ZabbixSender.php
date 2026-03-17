@@ -3,11 +3,11 @@
 namespace Fliix\ZabbixSender;
 
 use ArrayAccess;
-use JsonSerializable;
-use RuntimeException;
 use Fliix\ZabbixSender\Connection\ConnectionInterface;
 use Fliix\ZabbixSender\Resolver\DataResolver;
 use Fliix\ZabbixSender\Resolver\OptionsResolver;
+use JsonSerializable;
+use RuntimeException;
 
 use function is_array;
 use function is_null;

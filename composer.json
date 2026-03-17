@@ -1,12 +1,13 @@
 {
-	"name": "fliix/php-zabbix-sender",
+	"name": "fliix-cloud/php-zabbix-sender",
 	"type": "library",
-	"description": "PHP Implementation of Zabbix Sender (supports Zabbix 7.x).",
+	"description": "PHP Implementation of Zabbix Sender (supports Zabbix 7.x) forked from webmasterskaya/php-zabbix-sender",
+	"version": "1.0.0",
 	"require": {
-		"php": ">=8.2",
+		"php": ">=8.3",
 		"ext-sockets": "*",
-		"symfony/options-resolver": "^7.2",
-		"symfony/validator": "^7.2"
+		"symfony/options-resolver": "^7.4",
+		"symfony/validator": "^7.4"
 	},
 	"license": "Apache-2.0",
 	"support": {
@@ -40,7 +41,7 @@
 	"config": {
 		"optimize-autoloader": true,
 		"platform": {
-			"php": "8.2"
+			"php": "8.3"
 		}
 	},
 	"scripts": {
