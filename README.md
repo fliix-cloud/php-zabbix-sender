@@ -112,28 +112,7 @@ Keep this value – you will need it both in Zabbix and in your PHP code.
    - **PSK** – the hex key generated in Step 1.
 6. Save the host.
 
-### Step 3 – Configure Zabbix Server / Proxy (`zabbix_server.conf`)
-
-Make sure TLS is enabled in the Zabbix Server configuration:
-
-```ini
-TLSConnect=psk
-TLSPSKFile=/etc/zabbix/zabbix_server.psk
-TLSPSKIdentity=my-php-sender
-```
-
-Create `/etc/zabbix/zabbix_server.psk` with the raw hex key (no newline):
-
-```shell
-echo -n 'a3f1b2c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2' \
-  > /etc/zabbix/zabbix_server.psk
-chmod 640 /etc/zabbix/zabbix_server.psk
-chown zabbix:zabbix /etc/zabbix/zabbix_server.psk
-```
-
-Restart Zabbix Server after changing the configuration.
-
-### Step 4 – Use PSK in PHP
+### Step 3 – Use PSK in PHP
 
 ```php
 $sender = new \Fliix\ZabbixSender\ZabbixSender([
