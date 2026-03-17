@@ -1,6 +1,6 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender\Resolver;
+namespace Fliix\ZabbixSender\Resolver;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -39,46 +39,10 @@ final class OptionsResolver
 			->define('tls-connect')
 			->allowedTypes('string')
 			->info(
-				'How to connect to server or proxy. Values: unencrypted - connect without encryption (default); psk - connect using TLS and a pre-shared key; cert - connect using TLS and a certificate.'
+				'How to connect to server or proxy. Values: unencrypted - connect without encryption (default); psk - connect using TLS and a pre-shared key.'
 			)
-			->allowedValues('unencrypted', 'psk', 'cert')
+			->allowedValues('unencrypted', 'psk')
 			->default('unencrypted');
-
-		$resolver
-			->define('tls-ca-file')
-			->allowedTypes('string')
-			->info(
-				'Full pathname of a file containing the top-level CA(s) certificates for peer certificate verification.'
-			)
-			->allowedValues(Validation::createIsValidCallable(new Assert\File()));
-
-		$resolver
-			->define('tls-crl-file')
-			->allowedTypes('string')
-			->info('Full pathname of a file containing revoked certificates.')
-			->allowedValues(Validation::createIsValidCallable(new Assert\File()));
-
-		$resolver
-			->define('tls-server-cert-issuer')
-			->allowedTypes('string')
-			->info('Allowed server certificate issuer.');
-
-		$resolver
-			->define('tls-server-cert-subject')
-			->allowedTypes('string')
-			->info('Allowed server certificate subject.');
-
-		$resolver
-			->define('tls-cert-file')
-			->allowedTypes('string')
-			->info('Full pathname of a file containing the certificate or certificate chain.')
-			->allowedValues(Validation::createIsValidCallable(new Assert\File()));
-
-		$resolver
-			->define('tls-key-file')
-			->allowedTypes('string')
-			->info('Full pathname of a file containing the private key.')
-			->allowedValues(Validation::createIsValidCallable(new Assert\File()));
 
 		$resolver
 			->define('tls-psk-identity')
@@ -111,26 +75,12 @@ final class OptionsResolver
 				'Cipher string for OpenSSL 1.1.1 or newer for TLS 1.3. Override the default ciphersuite selection criteria. This option is not available if OpenSSL version is less than 1.1.1.'
 			);
 
-		$resolver
-			->define('connection_type')
-			->allowedTypes('string')
-			->allowedValues('unencrypted', 'psk', 'cert')
-			->default('unencrypted');
-
 		$connection_type = 'unencrypted';
-		if (isset($options['tls-connect'])) {
-			switch ($options['tls-connect']) {
-				case 'psk':
-					$resolver->setRequired(['tls-psk-identity', 'tls-psk']);
-					$connection_type = 'psk';
-					break;
-				case 'cert':
-					$resolver->setRequired(['tls-ca-file', 'tls-cert-file', 'tls-key-file', 'tls-key-file']);
-					$connection_type = 'certificate';
-					break;
-			}
+		if (isset($options['tls-connect']) && $options['tls-connect'] === 'psk') {
+			$resolver->setRequired(['tls-psk-identity', 'tls-psk']);
+			$connection_type = 'psk';
 		}
 
-		return array_merge(['connection_type' => $connection_type], $resolver->resolve($options));
+		return array_merge($resolver->resolve($options), ['connection_type' => $connection_type]);
 	}
 }

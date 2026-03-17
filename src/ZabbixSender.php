@@ -1,14 +1,13 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender;
+namespace Fliix\ZabbixSender;
 
 use ArrayAccess;
 use JsonSerializable;
 use RuntimeException;
-use Webmasterskaya\Utility\String\CasesHelper;
-use Webmasterskaya\ZabbixSender\Connection\ConnectionInterface;
-use Webmasterskaya\ZabbixSender\Resolver\DataResolver;
-use Webmasterskaya\ZabbixSender\Resolver\OptionsResolver;
+use Fliix\ZabbixSender\Connection\ConnectionInterface;
+use Fliix\ZabbixSender\Resolver\DataResolver;
+use Fliix\ZabbixSender\Resolver\OptionsResolver;
 
 use function is_array;
 use function is_null;
@@ -36,8 +35,13 @@ class ZabbixSender implements ZabbixSenderInterface
 	{
 		$this->options = OptionsResolver::resolve($options);
 
-		$connection      = trim($this->options['connection_type'] ?? 'no-encryption') . '-connection';
-		$connectionClass = __NAMESPACE__ . '\\Connection\\' . CasesHelper::classify($connection);
+		$connectionTypeMap = [
+			'unencrypted' => 'UnencryptedConnection',
+			'psk'         => 'PskConnection',
+		];
+
+		$connectionType  = trim($this->options['connection_type'] ?? 'unencrypted');
+		$connectionClass = __NAMESPACE__ . '\\Connection\\' . ($connectionTypeMap[$connectionType] ?? '');
 
 		if (!class_exists($connectionClass)) {
 			throw new RuntimeException('Unable to create a Connection instance: ' . $connectionClass);

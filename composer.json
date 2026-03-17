@@ -1,28 +1,27 @@
 {
-	"name": "webmasterskaya/php-zabbix-sender",
+	"name": "fliix/php-zabbix-sender",
 	"type": "library",
-	"description": "PHP Implementation of Zabbix Sender.",
+	"description": "PHP Implementation of Zabbix Sender (supports Zabbix 7.x).",
 	"require": {
 		"php": ">=8.2",
 		"ext-sockets": "*",
 		"symfony/options-resolver": "^7.2",
-		"symfony/validator": "^7.2",
-		"webmasterskaya/utility-string-helper": "^1.0"
+		"symfony/validator": "^7.2"
 	},
 	"license": "Apache-2.0",
 	"support": {
-		"issues": "https://github.com/webmasterskaya/php-zabbix-sender/issues",
-		"source": "https://github.com/webmasterskaya/php-zabbix-sender"
+		"issues": "https://github.com/fliix-cloud/php-zabbix-sender/issues",
+		"source": "https://github.com/fliix-cloud/php-zabbix-sender"
 	},
 	"minimum-stability": "stable",
 	"autoload": {
 		"psr-4": {
-			"Webmasterskaya\\ZabbixSender\\": "src/"
+			"Fliix\\ZabbixSender\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Webmasterskaya\\ZabbixSender\\Tests\\": "tests/"
+			"Fliix\\ZabbixSender\\Tests\\": "tests/"
 		}
 	},
 	"require-dev": {

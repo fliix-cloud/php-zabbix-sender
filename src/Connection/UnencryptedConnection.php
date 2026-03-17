@@ -1,9 +1,9 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender\Connection;
+namespace Fliix\ZabbixSender\Connection;
 
 use RuntimeException;
-use Webmasterskaya\ZabbixSender\Resolver\OptionsResolver;
+use Fliix\ZabbixSender\Resolver\OptionsResolver;
 
 use function is_resource;
 use function strlen;

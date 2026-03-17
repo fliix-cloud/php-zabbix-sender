@@ -1,6 +1,6 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender\Tests\Resolver;
+namespace Fliix\ZabbixSender\Tests\Resolver;
 
 use PHPUnit\Framework\TestCase;
 
