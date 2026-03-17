@@ -75,6 +75,13 @@ final class OptionsResolver
 				'Cipher string for OpenSSL 1.1.1 or newer for TLS 1.3. Override the default ciphersuite selection criteria. This option is not available if OpenSSL version is less than 1.1.1.'
 			);
 
+		// Internal option used after resolving once in ZabbixSender and reusing
+		// the same options in concrete connection constructors.
+		$resolver
+			->define('connection_type')
+			->allowedTypes('string')
+			->allowedValues('unencrypted', 'psk');
+
 		$connection_type = 'unencrypted';
 		if (isset($options['tls-connect']) && $options['tls-connect'] === 'psk') {
 			$resolver->setRequired(['tls-psk-identity', 'tls-psk']);

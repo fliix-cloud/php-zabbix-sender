@@ -2,9 +2,9 @@
 	"name": "fliix-cloud/php-zabbix-sender",
 	"type": "library",
 	"description": "PHP Implementation of Zabbix Sender (supports Zabbix 7.x) forked from webmasterskaya/php-zabbix-sender",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"require": {
-		"php": ">=8.3",
+		"php": "^8.4",
 		"ext-sockets": "*",
 		"symfony/options-resolver": "^7.4",
 		"symfony/validator": "^7.4"
@@ -41,10 +41,13 @@
 	"config": {
 		"optimize-autoloader": true,
 		"platform": {
-			"php": "8.3"
+			"php": "8.4"
 		}
 	},
 	"scripts": {
+		"test": [
+			"phpunit --colors=never --no-coverage"
+		],
 		"cs": [
 			"php-cs-fixer fix --ansi --dry-run --diff"
 		],
@@ -52,7 +55,8 @@
 			"php-cs-fixer fix --ansi"
 		],
 		"check": [
-			"@cs"
+			"@cs",
+			"@test"
 		]
 	}
 }

@@ -25,6 +25,18 @@ Official Zabbix Sender docs: <https://www.zabbix.com/documentation/current/en/ma
 composer require fliix-cloud/php-zabbix-sender
 ```
 
+## Development
+
+```shell
+composer test
+composer cs
+composer check
+```
+
+- `composer test` runs the PHPUnit test suite.
+- `composer cs` runs php-cs-fixer in dry-run mode.
+- `composer check` runs both style checks and tests.
+
 ---
 
 ## Quick start – unencrypted connection
