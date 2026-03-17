@@ -1,6 +1,6 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender\Resolver;
+namespace Fliix\ZabbixSender\Resolver;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -111,12 +111,6 @@ final class OptionsResolver
 				'Cipher string for OpenSSL 1.1.1 or newer for TLS 1.3. Override the default ciphersuite selection criteria. This option is not available if OpenSSL version is less than 1.1.1.'
 			);
 
-		$resolver
-			->define('connection_type')
-			->allowedTypes('string')
-			->allowedValues('unencrypted', 'psk', 'cert')
-			->default('unencrypted');
-
 		$connection_type = 'unencrypted';
 		if (isset($options['tls-connect'])) {
 			switch ($options['tls-connect']) {
@@ -131,6 +125,6 @@ final class OptionsResolver
 			}
 		}
 
-		return array_merge(['connection_type' => $connection_type], $resolver->resolve($options));
+		return array_merge($resolver->resolve($options), ['connection_type' => $connection_type]);
 	}
 }

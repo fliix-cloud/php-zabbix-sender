@@ -1,8 +1,8 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender\Resolver;
+namespace Fliix\ZabbixSender\Resolver;
 
-use Webmasterskaya\ZabbixSender\ZabbixSenderInterface;
+use Fliix\ZabbixSender\ZabbixSenderInterface;
 
 /**
  * Provides functionality for resolving data before sending it to Zabbix.

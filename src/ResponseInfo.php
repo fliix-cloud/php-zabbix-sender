@@ -1,6 +1,6 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender;
+namespace Fliix\ZabbixSender;
 
 /**
  * Provides methods for working with Zabbix response information.

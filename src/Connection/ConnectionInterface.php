@@ -1,6 +1,6 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender\Connection;
+namespace Fliix\ZabbixSender\Connection;
 
 /**
  * Interface defines methods for working connection from the host.

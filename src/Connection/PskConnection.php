@@ -1,15 +1,21 @@
 <?php
 
-namespace Webmasterskaya\ZabbixSender\Connection;
+namespace Fliix\ZabbixSender\Connection;
 
 use RuntimeException;
-use Webmasterskaya\ZabbixSender\Resolver\OptionsResolver;
+use Fliix\ZabbixSender\Resolver\OptionsResolver;
 
 use function is_resource;
 use function sprintf;
 
 /**
- * Implements PKS connections from host.
+ * Implements PSK (Pre-Shared Key) TLS connections to Zabbix Server.
+ *
+ * Uses TLS 1.2 with PSK cipher suites via the system's openssl binary.
+ * TLS 1.3 is explicitly disabled because PSK cipher suites (RFC 4279) are
+ * not supported in TLS 1.3 and are disabled by default in OpenSSL 3.x.
+ *
+ * Compatible with Zabbix 7.x.
  *
  * @internal
  */
@@ -29,12 +35,18 @@ final class PskConnection implements ConnectionInterface
 	{
 		$options = OptionsResolver::resolve($options);
 
+		// Use TLS 1.2 explicitly: PSK cipher suites are part of TLS 1.2 (RFC 4279)
+		// and are not available in TLS 1.3. OpenSSL 3.x disables them by default,
+		// so we force TLS 1.2 and specify an accepted cipher for Zabbix compatibility.
+		$cipher = $options['tls-cipher'] ?? 'PSK-AES256-CBC-SHA';
+
 		$this->command = sprintf(
-			'openssl s_client -connect %s:%d -psk_identity %s -psk %s',
+			'openssl s_client -connect %s:%d -psk_identity %s -psk %s -tls1_2 -cipher %s',
 			escapeshellarg($options['server']),
-			(int)$options['port'],
+			(int) $options['port'],
 			escapeshellarg($options['tls-psk-identity']),
-			escapeshellarg($options['tls-psk'])
+			escapeshellarg($options['tls-psk']),
+			escapeshellarg($cipher)
 		);
 	}
 
