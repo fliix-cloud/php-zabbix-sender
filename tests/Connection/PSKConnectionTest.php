@@ -38,5 +38,22 @@ class PSKConnectionTest extends TestCase
 		self::assertStringContainsString('openssl s_client', $command);
 		self::assertStringContainsString('-quiet', $command);
 		self::assertStringContainsString('-tls1_2', $command);
+		self::assertStringContainsString('PSK-AES128-GCM-SHA256:PSK-AES256-GCM-SHA384', $command);
+	}
+
+	public function testUsesCustomTlsCipherWhenProvided(): void
+	{
+		$options = $this->options();
+		$options['tls-cipher'] = 'PSK-AES128-CBC-SHA256';
+
+		$connection = new PskConnection($options);
+
+		$reflection = new ReflectionClass($connection);
+		$property = $reflection->getProperty('command');
+		$property->setAccessible(true);
+		$command = $property->getValue($connection);
+
+		self::assertStringContainsString('-cipher', $command);
+		self::assertStringContainsString('PSK-AES128-CBC-SHA256', $command);
 	}
 }

@@ -144,8 +144,13 @@ echo "Processed: {$info->getProcessed()}, Failed: {$info->getFailed()}";
 
 #### Optional: override the PSK cipher
 
-The default cipher is `PSK-AES256-CBC-SHA`. If your Zabbix Server is
-configured to use a different cipher, pass `tls-cipher` explicitly:
+By default, the library uses a TLS 1.2 PSK cipher list to improve
+compatibility with different OpenSSL/Zabbix builds:
+
+`PSK-AES128-GCM-SHA256:PSK-AES256-GCM-SHA384:PSK-AES128-CBC-SHA256:PSK-AES256-CBC-SHA384:PSK-AES128-CBC-SHA:PSK-AES256-CBC-SHA`
+
+If your Zabbix Server is configured to use a specific cipher, pass
+`tls-cipher` explicitly:
 
 ```php
 $sender = new \Fliix\ZabbixSender\ZabbixSender([
@@ -191,6 +196,20 @@ $success = $sender->execute();
 
 ---
 
+## Protocol compatibility (zabbix_sender)
+
+This library follows the Zabbix sender protocol frame format:
+
+- Header magic/version: `ZBXD\1`
+- Header length: 13 bytes total
+- Data length: 8 bytes little-endian (`pack("VV", $length, 0x00)`)
+- Payload: JSON with `request: "sender data"` and `data: [...]`
+
+This matches the Zabbix protocol docs for `zabbix_sender` and
+`header_datalen`.
+
+---
+
 ## All available options
 
 | Option | Type | Default | Description |
@@ -201,7 +220,7 @@ $success = $sender->execute();
 | `tls-connect` | string | `unencrypted` | Encryption mode: `unencrypted`, `psk` |
 | `tls-psk-identity` | string | – | PSK identity (required when `tls-connect=psk`) |
 | `tls-psk` | string | – | PSK hex key (required when `tls-connect=psk`) |
-| `tls-cipher` | string | `PSK-AES256-CBC-SHA` | Override TLS 1.2 cipher for PSK connections |
+| `tls-cipher` | string | `PSK-AES128-GCM-SHA256:PSK-AES256-GCM-SHA384:PSK-AES128-CBC-SHA256:PSK-AES256-CBC-SHA384:PSK-AES128-CBC-SHA:PSK-AES256-CBC-SHA` | Override TLS 1.2 cipher for PSK connections |
 | `tls-cipher13` | string | – | Override TLS 1.3 ciphersuite (OpenSSL ≥ 1.1.1 only) |
 
 ---

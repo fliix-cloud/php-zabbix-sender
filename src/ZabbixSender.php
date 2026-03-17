@@ -145,12 +145,26 @@ class ZabbixSender implements ZabbixSenderInterface
 
 		$this->close();
 
-		if (!str_starts_with($response, "ZBXD")) {
+		if (!str_starts_with($response, "ZBXD\1")) {
 			$this->lastResponseInfo = null;
 			throw new RuntimeException('invalid protocol header in receive data');
 		}
 
-		$responseData  = substr($response, 13);
+		if (strlen($response) < 13) {
+			$this->lastResponseInfo = null;
+			throw new RuntimeException('incomplete protocol header in receive data');
+		}
+
+		$headerLengthParts = unpack('Vlow/Vhigh', substr($response, 5, 8));
+		$expectedPayloadLength = (int) ($headerLengthParts['low'] + ($headerLengthParts['high'] << 32));
+
+		$responseData = substr($response, 13);
+		if (strlen($responseData) < $expectedPayloadLength) {
+			$this->lastResponseInfo = null;
+			throw new RuntimeException('incomplete protocol payload in receive data');
+		}
+
+		$responseData = substr($responseData, 0, $expectedPayloadLength);
 		$responseArray = json_decode($responseData, true);
 		if (is_null($responseArray)) {
 			throw new RuntimeException('invalid json data in receive data');

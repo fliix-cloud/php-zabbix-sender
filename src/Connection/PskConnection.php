@@ -24,6 +24,8 @@ use function trim;
  */
 final class PskConnection implements ConnectionInterface
 {
+	private const DEFAULT_PSK_CIPHER_LIST = 'PSK-AES128-GCM-SHA256:PSK-AES256-GCM-SHA384:PSK-AES128-CBC-SHA256:PSK-AES256-CBC-SHA384:PSK-AES128-CBC-SHA:PSK-AES256-CBC-SHA';
+
 	/**
 	 * @var resource|null
 	 */
@@ -33,6 +35,10 @@ final class PskConnection implements ConnectionInterface
 
 	private string $command;
 
+	private string $endpoint;
+
+	private string $cipherList;
+
 
 	public function __construct(array $options)
 	{
@@ -41,7 +47,8 @@ final class PskConnection implements ConnectionInterface
 		// Use TLS 1.2 explicitly: PSK cipher suites are part of TLS 1.2 (RFC 4279)
 		// and are not available in TLS 1.3. OpenSSL 3.x disables them by default,
 		// so we force TLS 1.2 and specify an accepted cipher for Zabbix compatibility.
-		$cipher = $options['tls-cipher'] ?? 'PSK-AES256-CBC-SHA';
+		$this->endpoint = sprintf('%s:%d', $options['server'], (int) $options['port']);
+		$this->cipherList = $options['tls-cipher'] ?? self::DEFAULT_PSK_CIPHER_LIST;
 
 		$this->command = sprintf(
 			'openssl s_client -quiet -connect %s:%d -psk_identity %s -psk %s -tls1_2 -cipher %s',
@@ -49,7 +56,7 @@ final class PskConnection implements ConnectionInterface
 			(int) $options['port'],
 			escapeshellarg($options['tls-psk-identity']),
 			escapeshellarg($options['tls-psk']),
-			escapeshellarg($cipher)
+			escapeshellarg($this->cipherList)
 		);
 	}
 
@@ -93,7 +100,22 @@ final class PskConnection implements ConnectionInterface
 
 		if ($output === false || $output === '') {
 			if ($errorOutput !== '') {
-				throw new RuntimeException('Failed to read PSK response: ' . $errorOutput);
+				$message = sprintf(
+					'Failed to read PSK response from %s using TLS 1.2 and cipher list "%s": %s',
+					$this->endpoint,
+					$this->cipherList,
+					$errorOutput
+				);
+
+				if (
+					str_contains($errorOutput, 'alert handshake failure')
+					|| str_contains($errorOutput, 'no cipher match')
+					|| str_contains($errorOutput, 'no ciphers available')
+				) {
+					$message .= ' Check whether Zabbix frontend/server TLS PSK settings match (tls_connect=PSK, same PSK identity/key) and, if needed, set option "tls-cipher" to the cipher accepted by your Zabbix server.';
+				}
+
+				throw new RuntimeException($message);
 			}
 
 			return false;
