@@ -22,7 +22,7 @@ Official Zabbix Sender docs: <https://www.zabbix.com/documentation/current/en/ma
 ## Installation
 
 ```shell
-composer require fliix/php-zabbix-sender
+composer require fliix-cloud/php-zabbix-sender
 ```
 
 ---
