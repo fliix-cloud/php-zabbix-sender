@@ -4,7 +4,6 @@ PHP implementation of the Zabbix Sender protocol — compatible with **Zabbix 7.
 
 - ✅ Unencrypted connection to Zabbix Server
 - ✅ TLS PSK connection to Zabbix Server (TLS 1.2, compatible with Zabbix 7.x / OpenSSL 3.x)
-- ❌ TLS certificate connection to Zabbix Server (in progress)
 
 Official Zabbix Sender docs: <https://www.zabbix.com/documentation/current/en/manpages/zabbix_sender>
 
@@ -185,16 +184,10 @@ $sender = new \Fliix\ZabbixSender\ZabbixSender([
 | `server` | string | *(required)* | Zabbix Server or Proxy hostname / IP |
 | `port` | int | `10051` | Zabbix Server port |
 | `host` | string | *(required)* | Zabbix host name the data belongs to |
-| `tls-connect` | string | `unencrypted` | Encryption mode: `unencrypted`, `psk`, `cert` |
+| `tls-connect` | string | `unencrypted` | Encryption mode: `unencrypted`, `psk` |
 | `tls-psk-identity` | string | – | PSK identity (required when `tls-connect=psk`) |
 | `tls-psk` | string | – | PSK hex key (required when `tls-connect=psk`) |
 | `tls-cipher` | string | `PSK-AES256-CBC-SHA` | Override TLS 1.2 cipher for PSK connections |
-| `tls-ca-file` | string | – | Path to CA certificate file (for `cert` mode) |
-| `tls-cert-file` | string | – | Path to client certificate file (for `cert` mode) |
-| `tls-key-file` | string | – | Path to client private key file (for `cert` mode) |
-| `tls-crl-file` | string | – | Path to CRL file |
-| `tls-server-cert-issuer` | string | – | Allowed server certificate issuer |
-| `tls-server-cert-subject` | string | – | Allowed server certificate subject |
 
 ---
 

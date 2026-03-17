@@ -38,7 +38,6 @@ class ZabbixSender implements ZabbixSenderInterface
 		$connectionTypeMap = [
 			'unencrypted' => 'UnencryptedConnection',
 			'psk'         => 'PskConnection',
-			'certificate' => 'CertificateConnection',
 		];
 
 		$connectionType  = trim($this->options['connection_type'] ?? 'unencrypted');
